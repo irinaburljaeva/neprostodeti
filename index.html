@@ -47,7 +47,7 @@
   .cell.opened .door{transform:rotateY(-78deg);box-shadow:none}
   .num{font-family:'Lora',serif;font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1}
   .cell.h2 .num,.cell.w2 .num{font-size:clamp(36px,6vw,60px)}
-  .door small{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;font-weight:600}
+  .door small{white-space:nowrap;position:relative;z-index:1;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;font-weight:600}
   .deco{position:absolute;right:10px;bottom:8px;width:34%;max-width:64px;opacity:.9}
   .lock{position:absolute;top:10px;right:10px;width:16px;height:16px;opacity:.55}
   .cell.locked{cursor:default}
@@ -153,13 +153,13 @@
    ===================================================================== */
 const CONFIG = {
   title: "Наш <em>уютный</em> декабрь",
-  lead:  "31 маленький повод создать семейные традиции, добрые воспоминания и новогоднее настроение. Все задания — по желанию.",
-  footer:"Прошедшие дни остаются открытыми — возвращайтесь к ним в любом порядке. Здесь нет отставаний и «долгов»: ваш декабрь — ваш темп.",
+  lead:  "Не ещё один марафон, а 31 маленький повод создать семейные традиции, добрые воспоминания и новогоднее настроение. Все задания — по желанию.",
+  footer:"Прошедшие дни остаются открытыми — возвращайтесь к ним в любом порядке.",
   startDate: "2026-12-01",
   days: 31,
   timeZone: "Europe/Moscow",          // единый часовой пояс открытия ячеек
   bigCells:  [1, 12, 19, 31],          // большие ячейки 2×2
-  wideCells: [5, 6, 13, 20, 26, 27],   // широкие — выходные с более длинными заданиями
+  wideCells: [5, 6, 13, 20, 26],       // широкие (сумма площадей должна делиться на 12 — иначе внизу останется «сирота»)
   storageKey: "advent-neprostodeti-2026",
   previewHash: "#preview"              // предпросмотр всех ячеек: ссылка с #preview в конце
 };
@@ -460,6 +460,7 @@ const isUnlocked = n => preview || iso(dayDate(n)) <= todayISO();
 const isToday = n => iso(dayDate(n)) === todayISO();
 const isWeekend = n => [0,6].includes(dayDate(n).getUTCDay());
 const fmt = d => d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",timeZone:"UTC"});
+const fmtShort = d => d.getUTCDate() + " " + d.toLocaleDateString("ru-RU",{month:"short",timeZone:"UTC"}).replace(/\.$/,"") + ".";
 const wd = d => d.toLocaleDateString("ru-RU",{weekday:"long",timeZone:"UTC"});
 
 function shuffled(n){
@@ -488,7 +489,7 @@ function render(){
     b.innerHTML = `
       <div class="inside"><span class="ttl">${t.title}</span>${st ? `<span class="badge ${st}">${STATUS_TEXT[st]}</span>` : ""}</div>
       <div class="door" style="background:${cat.color}">
-        <span class="num">${n}</span><small>${fmt(dayDate(n))}</small>
+        <span class="num">${n}</span><small>${(CONFIG.bigCells.includes(n)||CONFIG.wideCells.includes(n)) ? fmt(dayDate(n)) : fmtShort(dayDate(n))}</small>
         ${unlocked ? "" : LOCK}<span class="deco">${DECOS[(n+idx) % DECOS.length]}</span>
       </div>`;
     b.onclick = () => open(n, b);
