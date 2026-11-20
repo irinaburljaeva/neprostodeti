@@ -174,7 +174,7 @@
       <div class="tree-wrap"><svg id="tree" viewBox="0 0 200 232" role="img" aria-label="Мозаичная ёлка: огоньки отмеченных дней"></svg></div>
       <div class="hero-side">
         <div class="lit-count" id="litCount"></div>
-        <p class="hint">Каждый отмеченный день зажигает огонёк на нашей ёлке. Звезда загорится в новогодний вечер.</p>
+        <p class="hint">Каждый отмеченный день зажигает огонёк на нашей мозаичной ёлке. Звезда загорится в новогодний вечер.</p>
         <div id="countdown"></div>
         <button class="cta" id="cta" hidden></button>
       </div>
@@ -229,6 +229,7 @@ const CONFIG = {
   bigCells:  [1, 12, 19, 31],          // большие ячейки 2×2
   wideCells: [5, 6, 13, 20, 26],       // широкие (сумма площадей должна делиться на 12 — иначе внизу останется «сирота»)
   storageKey: "advent-neprostodeti-2026",
+  openAll: true,                       // ВРЕМЕННО: true — открыты все ячейки (для проверки). Перед запуском поставить false!
   previewHash: "#preview"              // предпросмотр всех ячеек: ссылка с #preview в конце
 };
 
@@ -503,7 +504,7 @@ const store = {
   set(v){ try{ localStorage.setItem(CONFIG.storageKey, JSON.stringify(v)); }catch(e){} }
 };
 let state = store.get(); state.opened ||= {}; state.status ||= {}; state.notes ||= {}; state.ms ||= {};
-const preview = location.hash === CONFIG.previewHash;
+const preview = CONFIG.openAll || location.hash === CONFIG.previewHash;
 
 const DECOS = [
   `<svg viewBox="0 0 60 60"><path d="M30 6l14 22h-8l12 18H12l12-18h-8z" fill="rgba(47,74,63,.55)"/><rect x="27" y="46" width="6" height="8" fill="rgba(47,74,63,.55)"/></svg>`,
@@ -772,6 +773,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
